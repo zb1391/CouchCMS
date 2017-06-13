@@ -63,34 +63,67 @@
         K_TBL_RELATIONS,
     );
     $k_stmts = array();
-    $k_stmts[] = "CREATE TABLE ".K_TBL_COMMENTS." (
-      id        int AUTO_INCREMENT NOT NULL,
-      tpl_id    int NOT NULL,
-      page_id   int NOT NULL,
-      user_id   int,
-      name      tinytext,
-      email     varchar(128),
-      link      varchar(255),
-      ip_addr   varchar(100),
-      date      datetime,
-      data      text,
-      approved  tinyint DEFAULT '0',
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_TEMPLATES." (
+      id            int AUTO_INCREMENT NOT NULL,
+      name          varchar(255) NOT NULL,
+      description   varchar(255),
+      clonable      int(1) DEFAULT '0',
+      executable    int(1) DEFAULT '1',
+      title         varchar(255),
+      access_level  int DEFAULT '0',
+      commentable   int(1) DEFAULT '0',
+      hidden        int(1) DEFAULT '0',
+      k_order       int DEFAULT '0',
+      dynamic_folders   int(1) DEFAULT '0',
+      nested_pages int(1) DEFAULT '0',
+      gallery          int(1) DEFAULT '0',
+      handler          text,
+      custom_params    text,
+      type             varchar(255),
+      config_list      text,
+      config_form      text,
+      parent           varchar(255),
+      icon             varchar(255),
       PRIMARY KEY (id)
     ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
-    $k_stmts[] = "CREATE TABLE ".K_TBL_DATA_NUMERIC." (
-      page_id   int NOT NULL,
-      field_id  int NOT NULL,
-      value     decimal(65,2) DEFAULT '0.00',
-      PRIMARY KEY (page_id, field_id)
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_DATA_TEXT." (
-      page_id       int NOT NULL,
-      field_id      int NOT NULL,
-      value         longtext,
-      search_value  text,
-      PRIMARY KEY (page_id, field_id)
+    $k_stmts[] = "CREATE TABLE ".K_TBL_PAGES." (
+      id                 int AUTO_INCREMENT NOT NULL,
+      template_id        int NOT NULL,
+      parent_id          int DEFAULT '0',
+      page_title         varchar(255),
+      page_name          varchar(255),
+      creation_date      datetime,
+      modification_date  datetime,
+      publish_date       datetime,
+      status             int,
+      is_master          int(1) DEFAULT '0',
+      page_folder_id     int DEFAULT '-1',
+      access_level       int DEFAULT '0',
+      comments_count     int DEFAULT '0',
+      comments_open      int(1) DEFAULT '1',
+      nested_parent_id   int DEFAULT '-1',
+      weight             int DEFAULT '0',
+      show_in_menu       int(1) DEFAULT '1',
+      menu_text          varchar(255),
+      is_pointer         int(1) DEFAULT '0',
+      pointer_link       text,
+      pointer_link_detail text,
+      open_external int(1) DEFAULT '0',
+      masquerades          int(1) DEFAULT '0',
+      strict_matching      int(1) DEFAULT '0',
+      file_name            varchar(260),
+      file_ext             varchar(20),
+      file_size            int DEFAULT '0',
+      file_meta            text,
+      creation_IP          varchar(45),
+      k_order            int DEFAULT '0',
+      FOREIGN KEY (template_id)
+        REFERENCES ".K_TBL_TEMPLATES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      PRIMARY KEY (id)
     ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
     $k_stmts[] = "CREATE TABLE ".K_TBL_FIELDS." (
@@ -139,100 +172,10 @@
       custom_params     text,
       searchable        int(1) DEFAULT '1',
       class             tinytext,
-      PRIMARY KEY (id)
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_FOLDERS." (
-      id            int AUTO_INCREMENT NOT NULL,
-      pid           int DEFAULT '-1',
-      template_id   int NOT NULL,
-      name          varchar(255) NOT NULL,
-      title         varchar(255),
-      k_desc        mediumtext,
-      image         text,
-      access_level  int DEFAULT '0',
-      weight        int DEFAULT '0',
-      PRIMARY KEY (id)
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_FULLTEXT." (
-      page_id  int NOT NULL,
-      title    varchar(255),
-      content  text,
-      PRIMARY KEY (page_id)
-    ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_USER_LEVELS." (
-      id        int AUTO_INCREMENT NOT NULL,
-      name      varchar(100),
-      title     varchar(100),
-      k_level   int DEFAULT '0',
-      disabled  int DEFAULT '0',
-      PRIMARY KEY (id)
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_PAGES." (
-      id                 int AUTO_INCREMENT NOT NULL,
-      template_id        int NOT NULL,
-      parent_id          int DEFAULT '0',
-      page_title         varchar(255),
-      page_name          varchar(255),
-      creation_date      datetime,
-      modification_date  datetime,
-      publish_date       datetime,
-      status             int,
-      is_master          int(1) DEFAULT '0',
-      page_folder_id     int DEFAULT '-1',
-      access_level       int DEFAULT '0',
-      comments_count     int DEFAULT '0',
-      comments_open      int(1) DEFAULT '1',
-      nested_parent_id   int DEFAULT '-1',
-      weight             int DEFAULT '0',
-      show_in_menu       int(1) DEFAULT '1',
-      menu_text          varchar(255),
-      is_pointer         int(1) DEFAULT '0',
-      pointer_link       text,
-      pointer_link_detail text,
-      open_external int(1) DEFAULT '0',
-      masquerades          int(1) DEFAULT '0',
-      strict_matching      int(1) DEFAULT '0',
-      file_name            varchar(260),
-      file_ext             varchar(20),
-      file_size            int DEFAULT '0',
-      file_meta            text,
-      creation_IP          varchar(45),
-      k_order            int DEFAULT '0',
-
-      PRIMARY KEY (id)
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_SETTINGS." (
-      k_key    varchar(255) NOT NULL,
-      k_value  longtext,
-      PRIMARY KEY (k_key)
-    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
-
-    $k_stmts[] = "CREATE TABLE ".K_TBL_TEMPLATES." (
-      id            int AUTO_INCREMENT NOT NULL,
-      name          varchar(255) NOT NULL,
-      description   varchar(255),
-      clonable      int(1) DEFAULT '0',
-      executable    int(1) DEFAULT '1',
-      title         varchar(255),
-      access_level  int DEFAULT '0',
-      commentable   int(1) DEFAULT '0',
-      hidden        int(1) DEFAULT '0',
-      k_order       int DEFAULT '0',
-      dynamic_folders   int(1) DEFAULT '0',
-      nested_pages int(1) DEFAULT '0',
-      gallery          int(1) DEFAULT '0',
-      handler          text,
-      custom_params    text,
-      type             varchar(255),
-      config_list      text,
-      config_form      text,
-      parent           varchar(255),
-      icon             varchar(255),
+      FOREIGN KEY (template_id)
+        REFERENCES ".K_TBL_TEMPLATES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
       PRIMARY KEY (id)
     ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
@@ -251,6 +194,104 @@
       last_failed        bigint(11) DEFAULT '0',
       failed_logins      int DEFAULT '0',
       PRIMARY KEY (id)
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_DATA_TEXT." (
+      page_id       int NOT NULL,
+      field_id      int NOT NULL,
+      value         longtext,
+      search_value  text,
+      FOREIGN KEY (page_id)
+        REFERENCES ".K_TBL_PAGES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      FOREIGN KEY (field_id)
+        REFERENCES ".K_TBL_FIELDS."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      PRIMARY KEY (page_id, field_id)
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_COMMENTS." (
+      id        int AUTO_INCREMENT NOT NULL,
+      tpl_id    int NOT NULL,
+      page_id   int NOT NULL,
+      user_id   int,
+      name      tinytext,
+      email     varchar(128),
+      link      varchar(255),
+      ip_addr   varchar(100),
+      date      datetime,
+      data      text,
+      approved  tinyint DEFAULT '0',
+      FOREIGN KEY (page_id)
+        REFERENCES ".K_TBL_PAGES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      FOREIGN KEY (user_id)
+        REFERENCES ".K_TBL_USERS."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_DATA_NUMERIC." (
+      page_id   int NOT NULL,
+      field_id  int NOT NULL,
+      value     decimal(65,2) DEFAULT '0.00',
+      FOREIGN KEY (page_id)
+        REFERENCES ".K_TBL_PAGES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      FOREIGN KEY (field_id)
+        REFERENCES ".K_TBL_FIELDS."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      PRIMARY KEY (page_id, field_id)
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_FOLDERS." (
+      id            int AUTO_INCREMENT NOT NULL,
+      pid           int DEFAULT '-1',
+      template_id   int NOT NULL,
+      name          varchar(255) NOT NULL,
+      title         varchar(255),
+      k_desc        mediumtext,
+      image         text,
+      access_level  int DEFAULT '0',
+      weight        int DEFAULT '0',
+      FOREIGN KEY (template_id)
+        REFERENCES ".K_TBL_TEMPLATES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_FULLTEXT." (
+      page_id  int NOT NULL,
+      title    varchar(255),
+      content  text,
+      FOREIGN KEY (page_id)
+        REFERENCES ".K_TBL_PAGES."(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+      PRIMARY KEY (page_id)
+    ) ENGINE = MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_USER_LEVELS." (
+      id        int AUTO_INCREMENT NOT NULL,
+      name      varchar(100),
+      title     varchar(100),
+      k_level   int DEFAULT '0',
+      disabled  int DEFAULT '0',
+      PRIMARY KEY (id)
+    ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+    $k_stmts[] = "CREATE TABLE ".K_TBL_SETTINGS." (
+      k_key    varchar(255) NOT NULL,
+      k_value  longtext,
+      PRIMARY KEY (k_key)
     ) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
     $k_stmts[] = "CREATE TABLE `".K_TBL_RELATIONS."` (
