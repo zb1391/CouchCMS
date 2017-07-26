@@ -100,7 +100,7 @@ If it exists I can recommend the user to upgrade
 This is going to create an insane amount of skus. In Face, for just the Mini, it would create 79 skus. That is excluding any secret menu skus that might exist. The number increases exponentially when you add the Essential and Escape that offer multiple choices in each add on category.
 
 ## Solution 2
-What if we apply Solution 1 so that Upgrades and Secret Menu Items are separate skus? This would tremendously decrease the total number of skus created.
+What if we apply Solution 1 so that only Upgrades and Secret Menu Items are separate skus? Ignoring normal add_ons would tremendously decrease the total number of skus created.
 
 To me the problem then is how to I validate the combinations? How do I know that You cannot get a Mini+LED+OxygenBlast? We would need to store these rules somewhere. We could store them on my side of things, but this affects the Open Bravo internal tools. How would a front desk operator know that this combination is not permitted if the internal tool has no way of validating?
 
